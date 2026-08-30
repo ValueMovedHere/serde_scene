@@ -5089,16 +5089,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "serde_-scene"
-version = "0.1.0"
-dependencies = [
- "avian3d",
- "bevy",
- "serde",
- "serde_json",
-]
-
-[[package]]
 name = "serde_core"
 version = "1.0.229"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5129,6 +5119,16 @@ dependencies = [
  "serde",
  "serde_core",
  "zmij",
+]
+
+[[package]]
+name = "serde_scene"
+version = "0.1.0"
+dependencies = [
+ "avian3d",
+ "bevy",
+ "serde",
+ "serde_json",
 ]
 
 [[package]]
