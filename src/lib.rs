@@ -38,6 +38,6 @@ pub fn from_json(path: &str) -> Vec<(Vec3, Quaternion, Collider)> {
 struct Data {
     #[serde(rename = "position")]
     transform: (f32, f32, f32),
-    rotation: (f32, f32, f32),
+    rotation: (f32, f32, f32, f32),
     scale: (f32, f32, f32),
 }
