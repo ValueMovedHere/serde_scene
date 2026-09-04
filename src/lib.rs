@@ -25,7 +25,7 @@ pub fn from_json(path: &str) -> Vec<(Vec3, Quaternion, Collider)> {
     let file = File::open(path).expect("Failed to read colliders from json");
     let reader = BufReader::new(file);
     let colliders_raw: Vec<Data> = from_reader(reader).expect("Failed to parse json");
-    let mut colliders_vec: Vec<()> = Vec::new();
+    let mut colliders_vec: Vec<(Vec3, Quaternion, Collider)> = Vec::new();
     for collider in colliders_raw.into_iter() {
         let collider_tuple = ();
         colliders_vec.push(collider_tuple);
