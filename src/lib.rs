@@ -12,22 +12,41 @@ use serde_json::from_reader;
 mod params;
 mod shapes;
 
-use params::{
-    CapsuleParams, //
-    ConeParams,
-    CuboidParams,
-    CylinderParams,
-    SphereParams,
-};
 use shapes::ShapeType;
 
 pub fn from_json(path: &str) -> Vec<(Vec3, Quaternion, Collider)> {
     let file = File::open(path).expect("Failed to read colliders from json");
     let reader = BufReader::new(file);
     let colliders_raw: Vec<Data> = from_reader(reader).expect("Failed to parse json");
-    let mut colliders_vec: Vec<(Vec3, Quaternion, Collider)> = Vec::new();
-    for collider in colliders_raw.into_iter() {
-        let collider_tuple = ();
+    let mut colliders_vec: Vec<(Vec3, Quaternion, Collider)> = Vec::with_capacity(1usize);
+    for collider_data in colliders_raw.into_iter() {
+        let collider = match collider_data.shape_type {
+            ShapeType::Cuboid(params) => Collider::cuboid(
+                params.width * collider_data.scale.0,
+                params.height * collider_data.scale.1,
+                params.depth * collider_data.scale.2,
+            ),
+            ShapeType::Sphere(params) => Collider::sphere(params.radius), // 还没有应用缩放
+            ShapeType::Cylinder(params) => {
+                Collider::cylinder(params.radius, params.height * collider_data.scale.1)
+            } // 横截面还没有应用缩放
+            ShapeType::Cone(params) => Collider::cone(params.radius, params.height),
+            ShapeType::Capsule(params) => Collider::capsule(params.radius, params.length),
+        };
+        let collider_tuple = (
+            Vec3::new(
+                collider_data.position.0,
+                collider_data.position.1,
+                collider_data.position.2,
+            ),
+            Quaternion::from_xyzw(
+                collider_data.rotation.0,
+                collider_data.rotation.1,
+                collider_data.rotation.2,
+                collider_data.rotation.3,
+            ),
+            collider,
+        );
         colliders_vec.push(collider_tuple);
     }
     colliders_vec
