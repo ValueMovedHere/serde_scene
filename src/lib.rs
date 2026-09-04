@@ -26,12 +26,19 @@ pub fn from_json(path: &str) -> Vec<(Vec3, Quaternion, Collider)> {
                 params.height * collider_data.scale.1,
                 params.depth * collider_data.scale.2,
             ),
-            ShapeType::Sphere(params) => Collider::sphere(params.radius), // 还没有应用缩放
-            ShapeType::Cylinder(params) => {
-                Collider::cylinder(params.radius, params.height * collider_data.scale.1)
-            } // 横截面还没有应用缩放
-            ShapeType::Cone(params) => Collider::cone(params.radius, params.height),
-            ShapeType::Capsule(params) => Collider::capsule(params.radius, params.length),
+            ShapeType::Sphere(params) => Collider::sphere(params.radius * collider_data.scale.0), // 缩放在某些情况下是不支持非均匀缩放的，所以在这些情况下直接统一使用 x 方向上的缩放
+            ShapeType::Cylinder(params) => Collider::cylinder(
+                params.radius * collider_data.scale.0,
+                params.height * collider_data.scale.1,
+            ),
+            ShapeType::Cone(params) => Collider::cone(
+                params.radius * collider_data.scale.0,
+                params.height * collider_data.scale.1,
+            ),
+            ShapeType::Capsule(params) => Collider::capsule(
+                params.radius * collider_data.scale.0,
+                params.length * collider_data.scale.1,
+            ),
         };
         let collider_tuple = (
             Vec3::new(
