@@ -9,7 +9,7 @@ use crate::params::{
 };
 
 #[derive(Debug, Deserialize)]
-enum ShapeType {
+pub(crate) enum ShapeType {
     Cuboid(CuboidParams),
     Sphere(SphereParams),
     Cylinder(CylinderParams),
