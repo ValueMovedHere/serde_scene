@@ -12,6 +12,15 @@ use serde_json::from_reader;
 mod params;
 mod shapes;
 
+use params::{
+    CapsuleParams, //
+    ConeParams,
+    CuboidParams,
+    CylinderParams,
+    SphereParams,
+};
+use shapes::ShapeType;
+
 pub fn from_json(path: &str) -> Vec<(Vec3, Quaternion, Collider)> {
     let file = File::open(path).expect("Failed to read colliders from json");
     let reader = BufReader::new(file);
@@ -25,4 +34,9 @@ pub fn from_json(path: &str) -> Vec<(Vec3, Quaternion, Collider)> {
 }
 
 #[derive(Deserialize, Debug)]
-struct Data {}
+struct Data {
+    shape_type: ShapeType,
+    position: (f32, f32, f32),
+    rotation: (f32, f32, f32, f32),
+    scale: (f32, f32, f32),
+}
