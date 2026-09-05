@@ -1,0 +1,98 @@
+(function() {
+    // 获取场景对象（Three.js Editor 中全局变量为 editor）
+    var scene = window.editor.scene;
+    if (!scene) {
+        console.error('未找到场景，请确保在 Three.js Editor 中运行。');
+        return;
+    }
+
+    var result = [];
+
+    // 只遍历 scene 的直接子节点
+    scene.children.forEach(function(child) {
+        // 仅处理 Mesh 且具有几何体
+        if (!child.isMesh || !child.geometry) return;
+
+        var geo = child.geometry;
+        var type = geo.type;
+        var shapeType = null;
+        var shapeParams = {};
+
+        // 根据几何体类型提取参数
+        switch (type) {
+            case 'BoxGeometry':
+                shapeType = 'cuboid';
+                shapeParams = {
+                    width: geo.parameters.width,
+                    height: geo.parameters.height,
+                    depth: geo.parameters.depth
+                };
+                break;
+
+            case 'SphereGeometry':
+                shapeType = 'sphere';
+                shapeParams = {
+                    radius: geo.parameters.radius
+                };
+                break;
+
+            case 'CylinderGeometry': {
+                var rTop = geo.parameters.radiusTop;
+                var rBottom = geo.parameters.radiusBottom;
+                var height = geo.parameters.height;
+                // 半径相等 → 圆柱；顶部为0 → 圆锥；底部为0 → 圆锥
+                if (rTop === rBottom) {
+                    shapeType = 'cylinder';
+                    shapeParams = { radius: rTop, height: height };
+                } else if (rTop === 0) {
+                    shapeType = 'cone';
+                    shapeParams = { radius: rBottom, height: height };
+                } else if (rBottom === 0) {
+                    shapeType = 'cone';
+                    shapeParams = { radius: rTop, height: height };
+                } else {
+                    console.warn('跳过不支持的圆柱（顶部和底部半径不同且不为0）:', child.name);
+                    return;
+                }
+                break;
+            }
+
+            case 'ConeGeometry':
+                shapeType = 'cone';
+                shapeParams = {
+                    radius: geo.parameters.radius,
+                    height: geo.parameters.height
+                };
+                break;
+
+            case 'CapsuleGeometry':
+                shapeType = 'capsule';
+                shapeParams = {
+                    radius: geo.parameters.radius,
+                    length: geo.parameters.length   // 圆柱部分长度，不包括半球
+                };
+                break;
+
+            default:
+                // 其他几何体（如平面、环面、文本等）不导出
+                return;
+        }
+
+        // 获取位置、旋转、缩放
+        var pos = child.position;
+        var quat = child.quaternion;
+        var scale = child.scale;
+
+        result.push({
+            shape_type: shapeType,
+            shape_params: shapeParams,
+            position: [pos.x, pos.y, pos.z],
+            rotation: [quat.x, quat.y, quat.z, quat.w],
+            scale: [scale.x, scale.y, scale.z]
+        });
+    });
+
+    // 输出 JSON 到控制台（自动格式化，便于复制）
+    console.log(JSON.stringify(result, null, 2));
+    console.log('共导出网格数量:', result.length);
+})();
