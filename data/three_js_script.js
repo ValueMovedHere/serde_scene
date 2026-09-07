@@ -42,13 +42,26 @@
             }
         }
 
-        result.push({
-            shape_type: shapeInfo.type,
-            shape_params: shapeInfo.params,
-            position: child.position.toArray(),
-            rotation: child.quaternion.toArray(),
-            scale: child.scale.toArray()
-        });
+        // 类型名大写映射（与 Rust 枚举变体名一致）
+var TYPE_MAP = {
+    cuboid: 'Cuboid',
+    sphere: 'Sphere',
+    cylinder: 'Cylinder',
+    cone: 'Cone',
+    capsule: 'Capsule'
+};
+
+// 构建形状枚举对象
+var shapeType = TYPE_MAP[shapeInfo.type];
+var shapeObj = {};
+shapeObj[shapeType] = shapeInfo.params;
+
+result.push({
+    shape_type: shapeObj,
+    position: child.position.toArray(),
+    rotation: child.quaternion.toArray(),
+    scale: child.scale.toArray()
+});
     });
 
     console.log(JSON.stringify(result, null, 2));
