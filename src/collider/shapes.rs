@@ -1,6 +1,6 @@
 use serde::Deserialize;
 
-use crate::params::{
+use super::params::{
     CapsuleParams,
     ConeParams,
     CuboidParams, //
