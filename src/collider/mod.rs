@@ -61,6 +61,7 @@ pub fn from_json(path: &str) -> Vec<(Vec3, Quaternion, Collider)> {
 }
 
 pub(crate) fn a_collider_from(path: &str) -> ColliderData {
+    // 从 JSON 文件里面解析出第一个 ColliderData 数据
     let file = File::open(path).unwrap();
     let reader = BufReader::new(file);
     let collider_data_vec: Vec<ColliderData> = from_reader(reader).unwrap();
