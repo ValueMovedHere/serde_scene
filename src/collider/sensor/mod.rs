@@ -1,6 +1,3 @@
-use std::fs::Fils;
-use std::io::BufReader;
-
 use avian3d::{
     math::Quaternion, //
     prelude::{
@@ -13,4 +10,9 @@ use bevy::prelude::Vec3;
 use serde::Deserialize;
 use serde_json::from_reader;
 
-pub fn from_json(path: &str) -> (RigidBody, Collider, Sensor) {}
+use crate::collider::{self, ColliderData};
+
+pub fn from_json(path: &str) -> (RigidBody, Collider, Sensor) {
+    let collider_data_vec = collider::from_json(path);
+    (RigidBody::Static, collider_data_vec.0, Sensor)
+}

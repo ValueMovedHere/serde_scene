@@ -60,6 +60,8 @@ pub fn from_json(path: &str) -> Vec<(Vec3, Quaternion, Collider)> {
     colliders_vec
 }
 
+pub(crate) fn a_collider() {}
+
 #[derive(Deserialize, Debug)]
 struct ColliderData {
     shape_type: ShapeType,
