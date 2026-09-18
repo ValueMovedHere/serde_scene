@@ -10,6 +10,7 @@ use serde::Deserialize;
 use serde_json::from_reader;
 
 mod params;
+mod sensor;
 mod shapes;
 
 use shapes::ShapeType;
