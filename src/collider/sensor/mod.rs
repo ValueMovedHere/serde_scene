@@ -12,7 +12,4 @@ use serde_json::from_reader;
 
 use crate::collider::{self, ColliderData};
 
-pub fn from_json(path: &str) -> (RigidBody, Collider, Sensor) {
-    let collider_data_vec = collider::from_json(path);
-    (RigidBody::Static, collider_data_vec.0, Sensor)
-}
+pub fn from_json(path: &str) -> (RigidBody, Collider, Sensor) {}

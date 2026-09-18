@@ -8,7 +8,7 @@ use super::params::{
     SphereParams,
 };
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub(crate) enum ShapeType {
     Cuboid(CuboidParams),
     Sphere(SphereParams),

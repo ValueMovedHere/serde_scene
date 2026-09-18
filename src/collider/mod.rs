@@ -60,9 +60,14 @@ pub fn from_json(path: &str) -> Vec<(Vec3, Quaternion, Collider)> {
     colliders_vec
 }
 
-pub(crate) fn a_collider() {}
+pub(crate) fn a_collider_from(path: &str) -> ColliderData {
+    let file = File::open(path).unwrap();
+    let reader = BufReader::new(file);
+    let collider_data_vec: Vec<ColliderData> = from_reader(reader).unwrap();
+    collider_data_vec[0].clone()
+}
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 struct ColliderData {
     shape_type: ShapeType,
     position: (f32, f32, f32),
