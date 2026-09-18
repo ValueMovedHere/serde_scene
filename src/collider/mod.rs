@@ -64,6 +64,7 @@ pub(crate) fn a_collider_from(path: &str) -> ColliderData {
     let file = File::open(path).unwrap();
     let reader = BufReader::new(file);
     let collider_data_vec: Vec<ColliderData> = from_reader(reader).unwrap();
+    // 一个 Sensor 数据 JSON 按理应该只有一项, 但是如果万一不知为何有不止一个数据则只使用第一个
     collider_data_vec[0].clone()
 }
 
