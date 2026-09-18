@@ -18,7 +18,7 @@ use shapes::ShapeType;
 pub fn from_json(path: &str) -> Vec<(Vec3, Quaternion, Collider)> {
     let file = File::open(path).expect("Failed to read colliders from json");
     let reader = BufReader::new(file);
-    let colliders_raw: Vec<Data> = from_reader(reader).expect("Failed to parse json");
+    let colliders_raw: Vec<ColliderData> = from_reader(reader).expect("Failed to parse json");
     let mut colliders_vec: Vec<(Vec3, Quaternion, Collider)> = Vec::with_capacity(1usize);
     for collider_data in colliders_raw.into_iter() {
         let collider = match collider_data.shape_type {
@@ -61,7 +61,7 @@ pub fn from_json(path: &str) -> Vec<(Vec3, Quaternion, Collider)> {
 }
 
 #[derive(Deserialize, Debug)]
-struct Data {
+struct ColliderData {
     shape_type: ShapeType,
     position: (f32, f32, f32),
     rotation: (f32, f32, f32, f32),
