@@ -16,9 +16,9 @@ mod shapes;
 use shapes::ShapeType;
 
 pub fn from_json(path: &str) -> Vec<(Vec3, Quaternion, Collider)> {
-    let file = File::open(path).expect("Failed to read colliders from json");
+    let file = File::open(path).expect("Failed to open JSON file");
     let reader = BufReader::new(file);
-    let colliders_raw: Vec<ColliderData> = from_reader(reader).expect("Failed to parse json");
+    let colliders_raw: Vec<ColliderData> = from_reader(reader).expect("Failed to parse JSON");
     let mut colliders_vec: Vec<(Vec3, Quaternion, Collider)> = Vec::with_capacity(1usize);
     for collider_data in colliders_raw.into_iter() {
         let collider = match collider_data.shape_type {
@@ -62,9 +62,9 @@ pub fn from_json(path: &str) -> Vec<(Vec3, Quaternion, Collider)> {
 
 pub(crate) fn a_collider_from(path: &str) -> ColliderData {
     // 从 JSON 文件里面解析出第一个 ColliderData 数据
-    let file = File::open(path).unwrap();
+    let file = File::open(path).expect("Failed to open JSON file");
     let reader = BufReader::new(file);
-    let collider_data_vec: Vec<ColliderData> = from_reader(reader).unwrap();
+    let collider_data_vec: Vec<ColliderData> = from_reader(reader).expect("Failed to parse JSON");
     // 一个 Sensor 数据 JSON 按理应该只有一项, 但是如果万一不知为何有不止一个数据则只使用第一个
     collider_data_vec[0].clone()
 }
