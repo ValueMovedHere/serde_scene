@@ -2,6 +2,7 @@ use avian3d::{
     math::Quaternion, //
     prelude::{
         Collider, //
+        CollisionEventsEnabled,
         RigidBody,
         Sensor,
     },
@@ -13,7 +14,15 @@ use crate::collider::{
     shapes::ShapeType,
 };
 
-pub fn from_json(path: &str) -> (Collider, RigidBody, Sensor, Transform) {
+pub fn from_json(
+    path: &str,
+) -> (
+    Collider,
+    RigidBody,
+    Sensor,
+    CollisionEventsEnabled,
+    Transform,
+) {
     // TODO: 后续需要正确解析位置, 旋转等数据并以合适的形式返回, 现在还不能直接使用
     let collider_data = a_collider_from(path);
     // 从 ColliderData 构造 Collider
@@ -50,5 +59,11 @@ pub fn from_json(path: &str) -> (Collider, RigidBody, Sensor, Transform) {
         ..Default::default()
     };
     // 先支持静态刚体
-    (collider, RigidBody::Static, Sensor, transform)
+    (
+        collider,
+        RigidBody::Static,
+        Sensor,
+        CollisionEventsEnabled,
+        transform,
+    )
 }
