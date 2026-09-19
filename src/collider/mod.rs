@@ -10,7 +10,7 @@ use serde::Deserialize;
 use serde_json::from_reader;
 
 mod params;
-mod sensor;
+pub mod sensor;
 mod shapes;
 
 use shapes::ShapeType;
@@ -70,7 +70,7 @@ pub(crate) fn a_collider_from(path: &str) -> ColliderData {
 }
 
 #[derive(Deserialize, Debug, Clone)]
-struct ColliderData {
+pub(crate) struct ColliderData {
     shape_type: ShapeType,
     position: (f32, f32, f32),
     rotation: (f32, f32, f32, f32),
