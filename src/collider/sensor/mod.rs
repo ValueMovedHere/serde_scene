@@ -6,16 +6,14 @@ use avian3d::{
         Sensor,
     },
 };
-use bevy::prelude::Vec3;
-use serde::Deserialize;
-use serde_json::from_reader;
+use bevy::prelude::{Transform, Vec3};
 
 use crate::collider::{
     a_collider_from, //
     shapes::ShapeType,
 };
 
-pub fn from_json(path: &str) -> (RigidBody, Collider, Sensor) {
+pub fn from_json(path: &str) -> (Collider, RigidBody, Sensor, Transform) {
     // TODO: 后续需要正确解析位置, 旋转等数据并以合适的形式返回, 现在还不能直接使用
     let collider_data = a_collider_from(path);
     // 从 ColliderData 构造 Collider
@@ -39,6 +37,18 @@ pub fn from_json(path: &str) -> (RigidBody, Collider, Sensor) {
             params.length * collider_data.scale.1,
         ),
     };
+    let position = Vec3::from(collider_data.position);
+    let rotation = Quaternion::from_xyzw(
+        collider_data.rotation.0,
+        collider_data.rotation.1,
+        collider_data.rotation.2,
+        collider_data.rotation.3,
+    );
+    let transform = Transform {
+        translation: position,
+        rotation,
+        ..Default::default()
+    };
     // 先支持静态刚体
-    (RigidBody::Static, collider, Sensor)
+    (collider, RigidBody::Static, Sensor, transform)
 }
