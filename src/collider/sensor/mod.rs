@@ -23,7 +23,6 @@ pub fn from_json(
     CollisionEventsEnabled,
     Transform,
 ) {
-    // TODO: 后续需要正确解析位置, 旋转等数据并以合适的形式返回, 现在还不能直接使用
     let collider_data = a_collider_from(path);
     // 从 ColliderData 构造 Collider
     let collider = match collider_data.shape_type {
