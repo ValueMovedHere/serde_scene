@@ -13,7 +13,7 @@ mod params;
 pub mod sensor;
 mod shapes;
 
-use shapes::ShapeType;
+pub(crate) use shapes::ShapeType;
 
 pub fn from_json(path: &str) -> Vec<(Vec3, Quaternion, Collider)> {
     let file = File::open(path).expect("Failed to open JSON file");
