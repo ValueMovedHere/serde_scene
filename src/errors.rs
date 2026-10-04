@@ -1,9 +1,9 @@
 use thiserror::Error;
 
-#[derive(Clone, Copy, Debug, Error)]
+#[derive(Clone, Debug, Error)]
 pub enum SceneError {
-    #[error("Scene file not found")]
-    NotFound,
-    #[error("Failed to parse scene JSON file")]
+    #[error("No such file or directory: path {path} does not exist")]
+    NotFound { path: String },
+    #[error("Failed to parse JSON scene file")]
     ParseError,
 }
