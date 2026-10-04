@@ -6,6 +6,7 @@ edition = "2024"
 license = "GPL-3.0-only"
 
 [dependencies]
+anyhow = "1.0.104"
 avian3d = "0.7.0"
 bevy = "0.19.1"
 serde = { version = "1.0.229", features = ["derive"] }
