@@ -9,16 +9,22 @@ use bevy::prelude::Vec3;
 use serde::Deserialize;
 use serde_json::from_reader;
 
+use crate::errors::SceneError;
+
 mod params;
 pub mod sensor;
 mod shapes;
 
 pub(crate) use shapes::ShapeType;
 
-pub fn from_json(path: &str) -> Vec<(Vec3, Quaternion, Collider)> {
-    let file = File::open(path).expect("Failed to open JSON file");
+pub fn from_json(path: &str) -> Result<Vec<(Vec3, Quaternion, Collider)>, SceneError> {
+    let file = File::open(path).map_err(|e| SceneError::NotFound {
+        path: path.to_string(),
+        source: e,
+    })?;
     let reader = BufReader::new(file);
-    let colliders_raw: Vec<ColliderData> = from_reader(reader).expect("Failed to parse JSON");
+    let colliders_raw: Vec<ColliderData> =
+        from_reader(reader).map_err(|e| SceneError::ParseError)?;
     let mut colliders_vec: Vec<(Vec3, Quaternion, Collider)> = Vec::with_capacity(1usize);
     for collider_data in colliders_raw.into_iter() {
         let collider = match collider_data.shape_type {
@@ -57,7 +63,7 @@ pub fn from_json(path: &str) -> Vec<(Vec3, Quaternion, Collider)> {
         );
         colliders_vec.push(collider_tuple);
     }
-    colliders_vec
+    Ok(colliders_vec)
 }
 
 pub(crate) fn a_collider_from(path: &str) -> ColliderData {

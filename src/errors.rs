@@ -5,7 +5,11 @@ use thiserror;
 pub enum SceneError {
     #[error("no such file or directory")]
     #[from(std::io::Error)]
-    NotFound,
+    NotFound {
+        path: String,
+        #[source]
+        source: std::io::Error,
+    },
     #[error("failed to parse JSON scene file")]
     #[from(serde_json::Error)]
     ParseError,
