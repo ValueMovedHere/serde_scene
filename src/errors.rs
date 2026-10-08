@@ -12,7 +12,11 @@ pub enum SceneError {
     },
     #[error("failed to parse JSON scene file")]
     #[from(serde_json::Error)]
-    ParseError,
+    ParseError {
+        file_path: String,
+        #[source]
+        source: serde_json::Error,
+    },
     #[error(transparent)]
     Other(#[from] anyhow::Error),
 }

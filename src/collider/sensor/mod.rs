@@ -10,20 +10,21 @@ use avian3d::{
 use bevy::prelude::{Transform, Vec3};
 
 use crate::collider::{
+    SceneError,
     a_collider_from, //
     shapes::ShapeType,
 };
 
-pub fn from_json(
-    path: &str,
-) -> (
+type SensorData = (
     Collider,
     RigidBody,
     Sensor,
     CollisionEventsEnabled,
     Transform,
-) {
-    let collider_data = a_collider_from(path);
+);
+
+pub fn from_json(path: &str) -> Result<SensorData, SceneError> {
+    let collider_data = a_collider_from(path)?;
     // 从 ColliderData 构造 Collider
     let collider = match collider_data.shape_type {
         ShapeType::Cuboid(params) => Collider::cuboid(
@@ -58,11 +59,11 @@ pub fn from_json(
         ..Default::default()
     };
     // 先支持静态刚体
-    (
+    Ok((
         collider,
         RigidBody::Static,
         Sensor,
         CollisionEventsEnabled,
         transform,
-    )
+    ))
 }

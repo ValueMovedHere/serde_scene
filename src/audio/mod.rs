@@ -4,14 +4,25 @@ use std::io::BufReader;
 use bevy::prelude::*;
 use serde_json;
 
+use crate::errors::SceneError;
+
+type SoundData = (Transform, AudioPlayer, PlaybackSettings);
+
 pub fn from_json(
     path: &str,
     audio_player: AudioPlayer,
     playback_settings: PlaybackSettings,
-) -> Vec<(Transform, AudioPlayer, PlaybackSettings)> {
-    let file = File::open(path).unwrap();
+) -> Result<Vec<SoundData>, SceneError> {
+    let file = File::open(path).map_err(|e| SceneError::NotFound {
+        path: path.to_string(),
+        source: e,
+    })?;
     let reader = BufReader::new(file);
-    let pos_data_vec: Vec<(f32, f32, f32)> = serde_json::from_reader(reader).unwrap();
+    let pos_data_vec: Vec<(f32, f32, f32)> =
+        serde_json::from_reader(reader).map_err(|e| SceneError::ParseError {
+            file_path: path.to_string(),
+            source: e,
+        })?;
     let mut sound_data_vec = Vec::with_capacity(1usize);
     // 假设这些位置对应的是同一个音频, 且具有相同的播放设置
     for item in pos_data_vec {
@@ -21,5 +32,5 @@ pub fn from_json(
             playback_settings,
         ));
     }
-    sound_data_vec
+    Ok(sound_data_vec)
 }

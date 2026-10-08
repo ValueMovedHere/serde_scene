@@ -24,7 +24,10 @@ pub fn from_json(path: &str) -> Result<Vec<(Vec3, Quaternion, Collider)>, SceneE
     })?;
     let reader = BufReader::new(file);
     let colliders_raw: Vec<ColliderData> =
-        from_reader(reader).map_err(|e| SceneError::ParseError)?;
+        from_reader(reader).map_err(|e| SceneError::ParseError {
+            file_path: path.to_string(),
+            source: e,
+        })?;
     let mut colliders_vec: Vec<(Vec3, Quaternion, Collider)> = Vec::with_capacity(1usize);
     for collider_data in colliders_raw.into_iter() {
         let collider = match collider_data.shape_type {
@@ -66,13 +69,20 @@ pub fn from_json(path: &str) -> Result<Vec<(Vec3, Quaternion, Collider)>, SceneE
     Ok(colliders_vec)
 }
 
-pub(crate) fn a_collider_from(path: &str) -> ColliderData {
+pub(crate) fn a_collider_from(path: &str) -> Result<ColliderData, SceneError> {
     // 从 JSON 文件里面解析出第一个 ColliderData 数据
-    let file = File::open(path).expect("Failed to open JSON file");
+    let file = File::open(path).map_err(|e| SceneError::NotFound {
+        path: path.to_string(),
+        source: e,
+    })?;
     let reader = BufReader::new(file);
-    let collider_data_vec: Vec<ColliderData> = from_reader(reader).expect("Failed to parse JSON");
+    let collider_data_vec: Vec<ColliderData> =
+        from_reader(reader).map_err(|e| SceneError::ParseError {
+            file_path: path.to_string(),
+            source: e,
+        })?;
     // 一个 Sensor 数据 JSON 按理应该只有一项, 但是如果万一不知为何有不止一个数据则只使用第一个
-    collider_data_vec[0].clone()
+    Ok(collider_data_vec[0].clone())
 }
 
 #[derive(Deserialize, Debug, Clone)]
